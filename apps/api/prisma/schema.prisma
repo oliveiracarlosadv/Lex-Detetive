@@ -1,0 +1,261 @@
+// Lex Detetive — esquema de dados (SQLite no modo local).
+// Para o modo SaaS, troque o provider para "postgresql" (ver docs/arquitetura.md).
+
+generator client {
+  provider      = "prisma-client-js"
+  // Motores para empacotar o app desktop em todos os sistemas.
+  binaryTargets = ["native", "darwin", "darwin-arm64", "windows", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         String     @default("analista") // admin | analista | leitor
+  office         String? // escritório / empresa
+  activity       String? // atividade: Advogado(a), Perito(a), Investigador(a)…
+  registryType   String? // OAB, CRC, CREA, CRA, CRECI…
+  registryNumber String?
+  registryUf     String?
+  logo           String? // logomarca dos relatórios (data URL PNG/JPEG)
+  totpSecret   String? // criptografado (AES-256-GCM)
+  totpEnabled  Boolean    @default(false)
+  active       Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  auditLogs    AuditLog[]
+}
+
+// Pessoa física ou jurídica pesquisada/monitorada.
+model Target {
+  id              String      @id @default(cuid())
+  kind            String // PF | PJ
+  name            String // nome completo ou razão social
+  tradeName       String? // nome fantasia
+  documentEnc     String? // CPF/CNPJ criptografado
+  documentHash    String? // hash para busca sem expor o documento
+  documentMasked  String? // CPF/CNPJ mascarado para exibição
+  rgEnc           String?
+  motherName      String?
+  fatherName      String?
+  partners        String? // JSON: sócios
+  notes           String?
+  purpose         String? // LGPD: finalidade / base legal do tratamento
+  oab             String? // "12345/PA": monitora intimações do advogado no DJEN
+  usernames       String? // nomes de usuário em redes sociais, separados por vírgula
+  monitored       Boolean     @default(false)
+  intervalMinutes Int         @default(1440)
+  lastCheckedAt   DateTime?
+  nextCheckAt     DateTime?
+  lastCheckSummary String? // JSON: resultado da última verificação por fonte
+  registry        String? // JSON: último snapshot cadastral (ex.: Receita Federal)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  processes       Process[]
+  alerts          Alert[]
+  snapshots       Snapshot[]
+  analyses        Analysis[]
+
+  @@index([documentHash])
+}
+
+model Process {
+  id             String     @id @default(cuid())
+  targetId       String
+  target         Target     @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  number         String // número CNJ
+  court          String // ex.: TJSP, TRF1, TRT2
+  system         String? // PJe, e-SAJ, Eproc...
+  className      String?
+  subjects       String? // JSON
+  organ          String? // órgão julgador
+  degree         String?
+  status         String     @default("ativo") // ativo | baixado | arquivado
+  value          Float?
+  parties        String? // JSON
+  filedAt        DateTime?
+  lastMovementAt DateTime?
+  docStatus      String     @default("nao_informado") // conferência de CPF/CNPJ: confirmado | divergente | nao_informado
+  docFound       String? // documento encontrado na publicação (mascarado)
+  source         String // id do conector
+  raw            String? // JSON bruto da fonte
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  movements      Movement[]
+  analyses       Analysis[]
+  clientLinks    ClientProcess[]
+
+  @@unique([targetId, number])
+}
+
+model Movement {
+  id          String   @id @default(cuid())
+  processId   String
+  process     Process  @relation(fields: [processId], references: [id], onDelete: Cascade)
+  date        DateTime
+  code        String?
+  description String
+  fingerprint String // evita duplicidade entre verificações
+  createdAt   DateTime @default(now())
+
+  @@unique([processId, fingerprint])
+  @@index([date])
+}
+
+// Histórico de verificações e alterações cadastrais.
+model Snapshot {
+  id        String   @id @default(cuid())
+  targetId  String
+  target    Target   @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  source    String
+  data      String // JSON
+  changes   String? // JSON: diferenças em relação ao snapshot anterior
+  createdAt DateTime @default(now())
+}
+
+model Alert {
+  id        String   @id @default(cuid())
+  targetId  String?
+  target    Target?  @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  processId String?
+  type      String // novo_processo | movimentacao | baixa | alteracao_cadastral | erro_fonte
+  severity  String   @default("info") // info | atencao | critico
+  title     String
+  message   String
+  data      String? // JSON: ficha do processo (processo, tribunal, vara, autor, réu, valor) + resumo da IA
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([read, createdAt])
+}
+
+model Analysis {
+  id        String   @id @default(cuid())
+  targetId  String?
+  target    Target?  @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  processId String?
+  process   Process? @relation(fields: [processId], references: [id], onDelete: Cascade)
+  provider  String
+  model     String
+  result    String // JSON estruturado
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  key       String   @id
+  value     String // valores sensíveis ficam criptografados
+  secret    Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String?
+  entityId  String?
+  details   String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// Cadastro de clientes do escritório (independente do monitoramento).
+model Client {
+  id             String          @id @default(cuid())
+  kind           String // PF | PJ
+  name           String
+  tradeName      String?
+  documentEnc    String?
+  documentHash   String?
+  documentMasked String?
+  rgEnc          String?
+  stateReg       String? // inscrição estadual (PJ)
+  birthDate      DateTime? // nascimento ou abertura
+  maritalStatus  String?
+  profession     String?
+  nationality    String?
+  email          String?
+  email2         String?
+  phone          String?
+  whatsapp       String?
+  website        String?
+  usernames      String? // redes sociais: nomes de usuário ou links, separados por vírgula
+  zip            String?
+  street         String?
+  number         String?
+  complement     String?
+  district       String?
+  city           String?
+  state          String?
+  contactPerson  String? // representante/contato (PJ)
+  responsible    String? // advogado responsável
+  notes          String?
+  status         String          @default("ativo") // ativo | inativo | prospecto
+  targetId       String?         @unique // perfil de monitoramento vinculado
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  processes      ClientProcess[]
+
+  @@index([documentHash])
+}
+
+model ClientProcess {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  processId String
+  process   Process  @relation(fields: [processId], references: [id], onDelete: Cascade)
+  role      String   @default("parte") // autor | réu | terceiro | interessado | parte
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@unique([clientId, processId])
+}
+
+// Conta Gmail conectada via OAuth (uma por usuário do sistema).
+model MailAccount {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  email           String
+  refreshTokenEnc String // criptografado (AES-256-GCM); vazio quando method = senha_app
+  method          String   @default("oauth") // oauth | senha_app
+  appPasswordEnc  String? // senha de app do Google, criptografada
+  scope           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Caixa de saída do app: tudo que foi enviado/rascunhado pelo Lex Detetive.
+model EmailMessage {
+  id             String    @id @default(cuid())
+  userId         String
+  folder         String    @default("rascunhos") // rascunhos | enviados | falhas
+  fromEmail      String?
+  to             String // JSON string[]
+  cc             String? // JSON string[]
+  bcc            String? // JSON string[]
+  subject        String
+  html           String
+  attachments    String? // JSON: [{filename, size, mime}]
+  gmailMessageId String?
+  gmailThreadId  String?
+  gmailDraftId   String?
+  error          String?
+  clientId       String?
+  processId      String?
+  targetId       String?
+  aiAssisted     Boolean   @default(false)
+  sentAt         DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([userId, folder, updatedAt])
+}

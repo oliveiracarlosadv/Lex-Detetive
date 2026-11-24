@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Identidade Lex Tecnologias */
+:root {
+  --navy: #0B1F3A;
+  --brand: #163E7A;
+  --gold: #C9A227;
+  --background: #F4F6F8;
+  --foreground: #0E1726;
+  --card: #FFFFFF;
+  --card-foreground: #0E1726;
+  --muted: #EEF1F5;
+  --muted-foreground: #5B6573;
+  --border: #E1E6ED;
+  --input: #D6DCE5;
+  --primary: #163E7A;
+  --primary-foreground: #FFFFFF;
+  --accent: #C9A227;
+  --ring: #163E7A;
+  --danger: #C2410C;
+  --success: #15803D;
+  --sidebar: #0B1F3A;
+  --sidebar-foreground: #C7D0DC;
+  --chart: #2B5AA8; /* validado: banda de luminosidade e contraste no fundo claro */
+  --chart-grid: #E6EAF0;
+}
+
+.dark {
+  --background: #07101F;
+  --foreground: #E6EBF2;
+  --card: #0D1A2F;
+  --card-foreground: #E6EBF2;
+  --muted: #13233D;
+  --muted-foreground: #8D9BB0;
+  --border: #1C2C47;
+  --input: #253858;
+  --primary: #5B8DEF;
+  --primary-foreground: #07101F;
+  --accent: #D4AF37;
+  --ring: #5B8DEF;
+  --danger: #FB923C;
+  --success: #4ADE80;
+  --sidebar: #050C18;
+  --sidebar-foreground: #A9B6C8;
+  --chart: #5B8DEF; /* validado contra #0D1A2F */
+  --chart-grid: #1C2C47;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-ring: var(--ring);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-navy: var(--navy);
+  --color-gold: var(--gold);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --radius-lg: 0.75rem;
+}
+
+/* Janela minimizada ou escondida: nenhuma animação roda (economiza processamento). */
+html.app-oculto *, html.app-oculto *::before, html.app-oculto *::after { animation-play-state: paused !important; transition: none !important; }
+
+@layer base {
+  * { border-color: var(--border); }
+  html, body { background: var(--background); color: var(--foreground); }
+  body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+  ::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); }
+}
+
+/* Computadores modestos ou com "reduzir movimento" ativado: sem animações. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}

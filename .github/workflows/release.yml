@@ -1,0 +1,71 @@
+# Gera os instaladores para Windows (.exe), macOS (.pkg/.dmg, Apple Silicon e Intel)
+# e Linux (.AppImage/.deb) ao publicar uma tag vX.Y.Z.
+name: Instaladores
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: windows-latest, script: 'dist:win' }
+          - { os: macos-latest, script: 'dist:mac' }
+          - { os: ubuntu-latest, script: 'dist:linux' }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci --foreground-scripts
+      - run: npm ci --no-audit --no-fund
+        working-directory: apps/desktop
+      - run: npm run ${{ matrix.script }}
+        working-directory: apps/desktop
+        env: { CSC_IDENTITY_AUTO_DISCOVERY: 'false' }
+      - name: Nomes claros dos instaladores (Apple Silicon, Intel, Windows, Linux)
+        shell: bash
+        run: bash scripts/installer-names.sh installers/build "${GITHUB_REF_NAME#v}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: instaladores-${{ matrix.os }}
+          path: |
+            installers/build/*.exe
+            installers/build/*.pkg
+            installers/build/*.dmg
+            installers/build/*.AppImage
+            installers/build/*.deb
+          if-no-files-found: error
+      - if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Lex Detetive ${{ github.ref_name }}
+          files: |
+            installers/build/*.exe
+            installers/build/*.pkg
+            installers/build/*.dmg
+            installers/build/*.AppImage
+            installers/build/*.deb
+
+  # No GitHub fica sempre só a última versão; as anteriores ficam no Google Drive
+  # (instaladores/vX.Y.Z). Só roda se os três sistemas tiverem compilado com sucesso.
+  manter-so-a-ultima:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remover releases anteriores
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release list --limit 100 --json tagName -q '.[].tagName' | while read -r tag; do
+            if [ "$tag" != "${{ github.ref_name }}" ]; then
+              echo "Removendo release $tag (a tag e o código continuam no histórico)"
+              gh release delete "$tag" --yes
+            fi
+          done

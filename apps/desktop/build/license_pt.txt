@@ -1,0 +1,18 @@
+LEX DETETIVE — CONTRATO DE LICENÇA DE USO
+Lex Tecnologias
+
+1. OBJETO. Este contrato concede ao usuário licença não exclusiva e intransferível para instalar e usar o Lex Detetive em seus computadores, conforme o plano contratado.
+
+2. DADOS E LGPD. O Lex Detetive armazena os dados localmente no computador do usuário, protegidos por criptografia AES-256. O usuário é o controlador dos dados pessoais que cadastrar e pesquisar, e deve tratá-los com finalidade legítima, base legal adequada e em conformidade com a Lei nº 13.709/2018 (LGPD).
+
+3. FONTES PÚBLICAS. As informações exibidas vêm de fontes públicas (como CNJ DataJud, Receita Federal, Portal da Transparência e diários oficiais) e podem estar incompletas ou desatualizadas. A ausência de registros não equivale a certidão negativa. Processos em segredo de justiça não são exibidos.
+
+4. INTELIGÊNCIA ARTIFICIAL. Resumos, análises e textos produzidos por IA são auxiliares e podem conter erros. Devem ser conferidos por profissional habilitado antes de qualquer uso.
+
+5. RESPONSABILIDADE. O software é fornecido "no estado em que se encontra". A Lex Tecnologias não se responsabiliza por decisões tomadas exclusivamente com base nas informações exibidas.
+
+6. BACKUP. Recomenda-se manter backups periódicos. O Lex Detetive faz backup automático antes de cada atualização.
+
+7. DESINSTALAÇÃO. A desinstalação pode manter ou apagar os dados locais, conforme escolha do usuário. Dados apagados não podem ser recuperados.
+
+Ao clicar em "Aceito" / "Concordo", você declara ter lido e aceitado estes termos.

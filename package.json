@@ -1,0 +1,26 @@
+{
+  "name": "lex-detetive",
+  "version": "0.1.13",
+  "private": true,
+  "description": "Lex Detetive — monitoramento jurídico e investigação processual (Lex Tecnologias)",
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "scripts": {
+    "setup": "bash scripts/install.sh",
+    "dev": "bash scripts/dev.sh",
+    "build": "npm run build -w apps/web && npm run build -w apps/api",
+    "start": "npm run start -w apps/api",
+    "test": "npm test -w apps/api",
+    "sync:drive": "bash scripts/sync-drive.sh"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "allowScripts": {
+    "prisma@5.22.0": true,
+    "@prisma/client@5.22.0": true,
+    "@prisma/engines@5.22.0": true
+  }
+}

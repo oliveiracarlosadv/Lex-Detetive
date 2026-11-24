@@ -1,0 +1,165 @@
+{
+  "name": "lex-detetive-desktop",
+  "productName": "Lex Detetive",
+  "version": "0.1.13",
+  "description": "Lex Detetive — monitoramento jurídico e investigação processual",
+  "author": {
+    "name": "Lex Tecnologias",
+    "url": "https://github.com/oliveiracarlosadv/Lex-Detetive"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "stage": "node scripts/stage.mjs",
+    "icons": "node scripts/icons.mjs",
+    "dist:mac": "node scripts/stage.mjs mac && node scripts/build-mac-uninstaller.mjs && electron-builder --mac --arm64 && electron-builder --mac --x64",
+    "dist:win": "node scripts/stage.mjs win && electron-builder --win",
+    "dist:linux": "node scripts/stage.mjs linux && electron-builder --linux"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1"
+  },
+  "devDependencies": {
+    "electron": "44.8.0",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "com.lextecnologias.lexdetetive",
+    "productName": "Lex Detetive",
+    "copyright": "© Lex Tecnologias",
+    "directories": {
+      "output": "../../installers/build",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "splash.html",
+      "assets/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "staging/api",
+        "to": "api"
+      }
+    ],
+    "asar": true,
+    "mac": {
+      "category": "public.app-category.business",
+      "icon": "build/icon.icns",
+      "target": [
+        "pkg",
+        "dmg"
+      ],
+      "extraResources": [
+        {
+          "from": "build/mac/Desinstalar Lex Detetive.app",
+          "to": "Desinstalar Lex Detetive.app"
+        }
+      ],
+      "artifactName": "Lex-Detetive-${version}-mac-${arch}.${ext}"
+    },
+    "pkg": {
+      "license": "build/license_pt.txt",
+      "welcome": "build/mac/welcome.html",
+      "conclusion": "build/mac/conclusion.html",
+      "isRelocatable": false,
+      "allowAnywhere": false,
+      "installLocation": "/Applications"
+    },
+    "dmg": {
+      "title": "Lex Detetive ${version}",
+      "contents": [
+        {
+          "x": 140,
+          "y": 180,
+          "type": "file"
+        },
+        {
+          "x": 400,
+          "y": 180,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 270,
+          "y": 330,
+          "type": "file",
+          "path": "build/mac/Desinstalar Lex Detetive.app"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 440
+      }
+    },
+    "win": {
+      "icon": "build/icon.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "menuCategory": "Lex Detetive",
+      "shortcutName": "Lex Detetive",
+      "uninstallDisplayName": "Lex Detetive",
+      "license": "build/license_pt.txt",
+      "installerLanguages": [
+        "pt_BR"
+      ],
+      "language": "1046",
+      "include": "build/installer.nsh",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true,
+      "artifactName": "Lex-Detetive-Setup-${version}.${ext}"
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "category": "Office",
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "maintainer": "Lex Tecnologias",
+      "artifactName": "Lex-Detetive-${version}-linux-${arch}.${ext}",
+      "synopsis": "Monitoramento jurídico e investigação processual",
+      "desktop": {
+        "entry": {
+          "Name": "Lex Detetive",
+          "Comment": "Monitoramento jurídico e investigação processual",
+          "Categories": "Office;"
+        }
+      }
+    },
+    "afterPack": "scripts/after-pack.cjs",
+    "deb": {
+      "depends": [
+        "libnss3",
+        "libgtk-3-0",
+        "libxss1",
+        "libasound2t64 | libasound2"
+      ],
+      "afterRemove": "build/linux/after-remove.sh"
+    },
+    "electronLanguages": [
+      "pt-BR",
+      "en-US"
+    ],
+    "compression": "maximum"
+  },
+  "homepage": "https://github.com/oliveiracarlosadv/Lex-Detetive"
+}

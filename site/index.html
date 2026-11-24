@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lex Detetive — pesquisa e monitoramento jurídico no seu navegador</title>
+<meta name="description" content="Pesquise e monitore processos, intimações, diários oficiais, dados de empresas e redes sociais. Gratuito, roda no navegador e os dados ficam no seu aparelho.">
+<meta name="theme-color" content="#0B1F3A">
+<link rel="icon" href="imagens/icon-192.png">
+<link rel="apple-touch-icon" href="imagens/icon-192.png">
+<meta property="og:title" content="Lex Detetive">
+<meta property="og:description" content="Pesquisa e monitoramento jurídico no navegador. Os dados ficam no seu aparelho.">
+<meta property="og:image" content="imagens/computador-painel.jpg">
+<style>
+  :root {
+    --navy: #0B1F3A; --navy-2: #13294B; --gold: #C9A227; --gold-2: #E0BC45;
+    --bg: #F6F7F9; --card: #FFFFFF; --text: #14202E; --muted: #5B6675; --line: #E3E7EC; --ok: #1F7A4D;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #0A1626; --card: #11223A; --text: #E8EDF3; --muted: #A3AFBF; --line: #22354F; }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+  .wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+  /* Topo */
+  .nav { position: sticky; top: 0; z-index: 10; background: rgba(11,31,58,.96); backdrop-filter: saturate(1.2); color: #fff; padding-top: env(safe-area-inset-top); }
+  .nav .wrap { display: flex; align-items: center; gap: 16px; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; }
+  .brand img { width: 32px; height: 32px; border-radius: 8px; }
+  .brand small { display: block; font-size: 9px; letter-spacing: .25em; color: var(--gold); font-weight: 600; }
+  .nav-links { margin-left: auto; display: flex; gap: 18px; font-size: 14px; }
+  .nav-links a { text-decoration: none; opacity: .85; }
+  .nav-links a:hover { opacity: 1; }
+  .nav .mini { margin-left: 8px; background: var(--gold); color: var(--navy); padding: 8px 14px; border-radius: 10px; font-weight: 700; text-decoration: none; font-size: 14px; white-space: nowrap; }
+  @media (max-width: 760px) { .nav-links { display: none; } .nav .mini { margin-left: auto; } }
+
+  /* Hero */
+  .hero { background: radial-gradient(1200px 500px at 80% -10%, #1d3a66 0%, var(--navy) 60%); color: #fff; padding: 56px 0 64px; }
+  .hero .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; }
+  @media (max-width: 900px) { .hero .wrap { grid-template-columns: 1fr; } }
+  .tag { display: inline-block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold-2); border: 1px solid rgba(201,162,39,.5); padding: 4px 10px; border-radius: 999px; }
+  h1 { font-size: clamp(30px, 5vw, 50px); line-height: 1.1; margin: 16px 0 12px; }
+  .hero p.lead { font-size: clamp(16px, 2.2vw, 19px); color: #CFD8E3; max-width: 560px; margin: 0 0 28px; }
+  .use-btn { display: inline-flex; align-items: center; justify-content: center; gap: 14px; background: linear-gradient(180deg, var(--gold-2), var(--gold)); color: var(--navy); font-size: clamp(22px, 3.6vw, 30px); font-weight: 800; text-decoration: none; padding: 22px 44px; border-radius: 18px; box-shadow: 0 12px 30px rgba(201,162,39,.35), inset 0 -3px 0 rgba(0,0,0,.12); transition: transform .15s, box-shadow .15s; }
+  .use-btn:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(201,162,39,.45), inset 0 -3px 0 rgba(0,0,0,.12); }
+  .use-btn svg { width: 30px; height: 30px; }
+  .hero .sub { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 18px; font-size: 14px; color: #B9C5D3; }
+  .hero .sub span::before { content: "✓ "; color: var(--gold-2); font-weight: 700; }
+  .hero-shot { position: relative; }
+  .hero-shot .pc { border-radius: 12px; box-shadow: 0 25px 60px rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.08); }
+  .hero-shot .phone { position: absolute; right: -6px; bottom: -28px; width: 32%; border-radius: 22px; border: 6px solid #0a1424; box-shadow: 0 20px 45px rgba(0,0,0,.5); }
+  @media (max-width: 900px) { .hero-shot .phone { right: 4px; } }
+
+  section { padding: 64px 0; }
+  h2 { font-size: clamp(24px, 3.4vw, 34px); margin: 0 0 10px; line-height: 1.2; }
+  .kicker { color: var(--gold); font-weight: 700; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
+  .intro { color: var(--muted); max-width: 720px; margin: 0 0 32px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  @media (max-width: 860px) { .grid3, .grid2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+  .card h3 { margin: 10px 0 6px; font-size: 18px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+  .ico { width: 42px; height: 42px; border-radius: 12px; background: rgba(201,162,39,.14); color: var(--gold); display: grid; place-items: center; font-size: 22px; }
+  .step-n { width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff; display: grid; place-items: center; font-weight: 800; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .step-n { background: var(--gold); color: var(--navy); } }
+
+  /* Galeria */
+  .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  @media (max-width: 860px) { .gallery { grid-template-columns: 1fr; } }
+  figure { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  figure img { width: 100%; border-bottom: 1px solid var(--line); }
+  figcaption { padding: 12px 16px; font-size: 14px; color: var(--muted); }
+  figcaption b { color: var(--text); }
+  .phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 22px; }
+  @media (max-width: 860px) { .phones { grid-template-columns: repeat(2, 1fr); } }
+  .phones figure img { border-radius: 0; }
+
+  /* Fontes */
+  .sources { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 860px) { .sources { grid-template-columns: 1fr; } }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip { font-size: 13px; padding: 5px 10px; border-radius: 999px; background: var(--bg); border: 1px solid var(--line); }
+  .chip.auto { border-color: rgba(31,122,77,.35); background: rgba(31,122,77,.08); }
+
+  /* Instalar */
+  .install { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  @media (max-width: 860px) { .install { grid-template-columns: 1fr; } }
+  ol.steps { margin: 12px 0 0; padding-left: 20px; }
+  ol.steps li { margin: 6px 0; }
+
+  /* Manual */
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 0 18px; margin-bottom: 12px; }
+  summary { cursor: pointer; font-weight: 700; padding: 16px 0; list-style: none; display: flex; align-items: center; gap: 10px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; margin-left: auto; font-size: 22px; color: var(--gold); line-height: 1; }
+  details[open] summary::after { content: "–"; }
+  details .body { padding: 0 0 18px; color: var(--muted); }
+  details .body ul, details .body ol { margin: 6px 0; padding-left: 20px; }
+  details .body b { color: var(--text); }
+
+  .about { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  @media (max-width: 860px) { .about { grid-template-columns: 1fr; } }
+  .cta-final { background: var(--navy); color: #fff; text-align: center; border-radius: 24px; padding: 48px 20px; }
+  .cta-final p { color: #CFD8E3; margin: 0 0 26px; }
+  footer { padding: 36px 0 calc(36px + env(safe-area-inset-bottom)); color: var(--muted); font-size: 14px; text-align: center; }
+  .note { font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#"><img src="imagens/icon-192.png" alt=""><span>Lex Detetive<small>LEX TECNOLOGIAS</small></span></a>
+    <nav class="nav-links" aria-label="Seções">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#telas">Telas</a>
+      <a href="#instalar">Instalar</a>
+      <a href="#manual">Manual</a>
+      <a href="#sobre">Sobre</a>
+    </nav>
+    <a class="mini" href="app/">Use aqui</a>
+  </div>
+</header>
+
+<main>
+<!-- Destaque -->
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <span class="tag">Gratuito · sem cadastro · no navegador</span>
+      <h1>Pesquisa e monitoramento jurídico, direto no seu navegador.</h1>
+      <p class="lead">Encontre processos, intimações, publicações em diários oficiais, dados de empresas e perfis públicos de pessoas e empresas. Monitore e receba alertas. Gere relatórios prontos para o cliente.</p>
+      <a class="use-btn" href="app/" aria-label="Use aqui: abrir o Lex Detetive">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        USE AQUI
+      </a>
+      <div class="sub"><span>Abre na hora</span><span>Funciona no celular e no computador</span><span>Seus dados ficam no seu aparelho</span></div>
+    </div>
+    <div class="hero-shot">
+      <img class="pc" src="imagens/computador-painel.jpg" alt="Painel do Lex Detetive no computador" width="1400" height="882">
+      <img class="phone" src="imagens/celular-menu.jpg" alt="Menu do Lex Detetive no celular" width="520" height="1126">
+    </div>
+  </div>
+</div>
+
+<!-- Como funciona -->
+<section id="como-funciona">
+  <div class="wrap">
+    <div class="kicker">Como funciona</div>
+    <h2>Três passos, sem instalar nada</h2>
+    <p class="intro">O Lex Detetive é um aplicativo web: você abre pelo navegador, como um site, e pode instalá-lo na tela inicial do celular ou do computador. Não há conta, servidor ou mensalidade.</p>
+    <div class="grid3">
+      <div class="card"><div class="step-n">1</div><h3>Abra e se apresente</h3><p>Clique em <b>Use aqui</b>. No primeiro acesso, uma apresentação curta explica o app e pede só seu nome (e uma foto, se quiser).</p></div>
+      <div class="card"><div class="step-n">2</div><h3>Pesquise</h3><p>Digite nome, CPF, CNPJ, OAB ou número do processo. O app consulta as fontes públicas oficiais e mostra processos, partes, publicações e dados cadastrais.</p></div>
+      <div class="card"><div class="step-n">3</div><h3>Monitore e acompanhe</h3><p>Com um clique a pessoa ou empresa passa a ser monitorada. As novidades viram <b>alertas</b> e tudo pode virar <b>relatório</b> em PDF, Word ou Excel.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Recursos -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="kicker">Recursos</div>
+    <h2>Tudo o que a rotina jurídica pede</h2>
+    <p class="intro">Feito por advogado, para advogados, peritos, investigadores e equipes de compliance.</p>
+    <div class="grid3">
+      <div class="card"><div class="ico">⚖️</div><h3>Processos e intimações</h3><p>Fonte principal: DJEN, o Diário de Justiça Eletrônico Nacional do CNJ, com publicações de todos os tribunais integrados.</p></div>
+      <div class="card"><div class="ico">🪪</div><h3>Conferência de CPF</h3><p>Compara o CPF/CNPJ citado nas publicações com o cadastrado e aponta possíveis homônimos.</p></div>
+      <div class="card"><div class="ico">🔔</div><h3>Alertas inteligentes</h3><p>Avisa novos processos, intimações e movimentações recentes, sem repetir publicações antigas.</p></div>
+      <div class="card"><div class="ico">🏢</div><h3>Dados de empresas</h3><p>Razão social, situação, sócios, endereço, Simples e MEI pelas APIs públicas BrasilAPI e CNPJá.</p></div>
+      <div class="card"><div class="ico">📰</div><h3>Diários oficiais</h3><p>Diários municipais automaticamente e buscas prontas no Diário Oficial da União e nos diários dos 27 estados.</p></div>
+      <div class="card"><div class="ico">🌐</div><h3>Redes e internet</h3><p>Perfis públicos por nome de usuário e buscas prontas no Google, Bing, DuckDuckGo e Yandex.</p></div>
+      <div class="card"><div class="ico">👥</div><h3>Clientes</h3><p>Cadastro completo, vínculo de processos e sugestão automática do cliente quando ele aparece nas partes.</p></div>
+      <div class="card"><div class="ico">📄</div><h3>Relatórios forenses</h3><p>Seis modelos (sintético, analítico, processual, due diligence, compliance e investigação) com resumo de cada processo.</p></div>
+      <div class="card"><div class="ico">✨</div><h3>Lex AI (opcional)</h3><p>Pareceres e resumos com a IA de sua escolha: Gemini, Claude, OpenAI, OpenRouter ou Ollama local.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Telas -->
+<section id="telas" style="background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="kicker">Telas</div>
+    <h2>Veja como é</h2>
+    <p class="intro">Imagens reais do aplicativo, no computador e no celular.</p>
+    <div class="gallery">
+      <figure><img src="imagens/computador-pesquisa.jpg" alt="Tela de pesquisa" loading="lazy" width="1400" height="882"><figcaption><b>Pesquisa.</b> Pessoa física ou jurídica, com CPF, CNPJ, OAB, redes sociais e números de processo.</figcaption></figure>
+      <figure><img src="imagens/computador-fontes.jpg" alt="Fontes consultadas" loading="lazy" width="1400" height="882"><figcaption><b>Fontes.</b> O que é consultado automaticamente e o que vira busca pronta.</figcaption></figure>
+      <figure><img src="imagens/computador-relatorios.jpg" alt="Relatórios" loading="lazy" width="1400" height="882"><figcaption><b>Relatórios.</b> Escolha o modelo e o formato: PDF, Word, ODT, Excel, CSV, HTML, TXT ou JSON.</figcaption></figure>
+      <figure><img src="imagens/computador-backup.jpg" alt="Backup" loading="lazy" width="1400" height="882"><figcaption><b>Backup.</b> Exporte um arquivo com todos os dados e importe em outro aparelho.</figcaption></figure>
+    </div>
+    <div class="phones">
+      <figure><img src="imagens/celular-boas-vindas.jpg" alt="Boas-vindas no celular" loading="lazy" width="520" height="1126"><figcaption><b>Primeiro uso</b></figcaption></figure>
+      <figure><img src="imagens/celular-como-funciona.jpg" alt="Como funciona" loading="lazy" width="520" height="1126"><figcaption><b>Como funciona</b></figcaption></figure>
+      <figure><img src="imagens/celular-painel.jpg" alt="Painel no celular" loading="lazy" width="520" height="1126"><figcaption><b>Painel</b></figcaption></figure>
+      <figure><img src="imagens/celular-menu.jpg" alt="Menu no celular" loading="lazy" width="520" height="1126"><figcaption><b>Menu</b></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- Fontes -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Fontes</div>
+    <h2>De onde vêm as informações</h2>
+    <p class="intro">Somente fontes públicas oficiais. As consultas saem do seu navegador direto para elas. Alguns sites não permitem consulta automática; para esses, o app monta a busca e você abre com um clique.</p>
+    <div class="sources">
+      <div class="card"><h3>Automáticas</h3><p>O app consulta e traz o resultado para dentro.</p>
+        <div class="chips"><span class="chip auto">DJEN (CNJ)</span><span class="chip auto">Querido Diário (municípios)</span><span class="chip auto">BrasilAPI</span><span class="chip auto">CNPJá</span><span class="chip auto">GitHub</span><span class="chip auto">Bluesky</span><span class="chip auto">Mastodon</span><span class="chip auto">GitLab</span></div></div>
+      <div class="card"><h3>Buscas prontas</h3><p>Um clique abre o resultado no site oficial.</p>
+        <div class="chips"><span class="chip">Diário Oficial da União</span><span class="chip">Diários dos 27 estados</span><span class="chip">Portal da Transparência</span><span class="chip">Google</span><span class="chip">Bing</span><span class="chip">DuckDuckGo</span><span class="chip">Yandex</span><span class="chip">Instagram, Facebook, X, TikTok, LinkedIn…</span><span class="chip">BNMP</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Instalar -->
+<section id="instalar" style="padding-top:0">
+  <div class="wrap">
+    <div class="kicker">Instalar</div>
+    <h2>Use como aplicativo no celular</h2>
+    <p class="intro">Ícone na tela inicial, tela cheia e abertura rápida. Dentro do app, o botão <b>Instalar no celular</b> do menu mostra estas mesmas instruções.</p>
+    <div class="install">
+      <div class="card"><h3>iPhone e iPad</h3><ol class="steps"><li>Abra o Lex Detetive no <b>Safari</b>.</li><li>Toque em <b>Compartilhar</b> (quadrado com seta).</li><li>Toque em <b>Adicionar à Tela de Início</b>.</li><li>Toque em <b>Adicionar</b>.</li></ol></div>
+      <div class="card"><h3>Android</h3><ol class="steps"><li>Abra o Lex Detetive no <b>Chrome</b>.</li><li>Toque no menu <b>⋮</b> (canto superior).</li><li>Toque em <b>Instalar app</b>.</li><li>Confirme em <b>Instalar</b>.</li></ol></div>
+      <div class="card"><h3>Computador</h3><ol class="steps"><li>Abra no <b>Chrome</b> ou no <b>Edge</b>.</li><li>Clique no ícone de instalar, no fim da barra de endereço.</li><li>Clique em <b>Instalar</b>.</li><li>No Safari do Mac: <b>Arquivo → Adicionar ao Dock</b>.</li></ol></div>
+    </div>
+  </div>
+</section>
+
+<!-- Manual -->
+<section id="manual" style="background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="kicker">Manual</div>
+    <h2>Manual de uso</h2>
+    <p class="intro">Clique em cada tópico para abrir.</p>
+
+    <details open><summary>1. Primeiro acesso</summary><div class="body">
+      <ol><li>Clique em <b>Use aqui</b>.</li><li>Leia a apresentação (use <b>Avançar</b>).</li><li>Informe <b>nome e sobrenome</b>; a foto e o escritório são opcionais.</li><li>Clique em <b>Começar a usar</b>. O menu passa a mostrar seu primeiro e último nome, com a foto.</li></ol>
+      <p>Não há senha nem conta. Se outras pessoas usam o mesmo aparelho, ligue a <b>senha de bloqueio</b> em Configurações → Segurança.</p>
+    </div></details>
+
+    <details><summary>2. Pesquisa</summary><div class="body">
+      <ul><li>Escolha <b>Pessoa física</b> ou <b>Pessoa jurídica</b>.</li><li>Preencha o que souber: nome, CPF/CNPJ, OAB (para intimações de advogado), nomes de usuário em redes sociais e números de processo.</li><li>Em pessoa jurídica, digite o CNPJ e clique em <b>Buscar dados</b> para preencher razão social, nome fantasia e sócios.</li><li>Clique em <b>Pesquisar</b>. O quadro <b>Fontes consultadas</b> mostra o resultado de cada fonte.</li><li>Na lista de processos, filtre por <b>ano</b> e use <b>Vincular ao cliente</b>: o app sugere o cliente cadastrado que aparece nas partes.</li></ul>
+    </div></details>
+
+    <details><summary>3. Monitoramento</summary><div class="body">
+      <ul><li>Depois de pesquisar, clique em <b>Monitorar</b>, ou cadastre em Monitoramento → <b>Novo monitoramento</b>.</li><li>Escolha a frequência (de 1 minuto a 24 horas).</li><li><b>Consultar agora</b> atualiza todos os monitorados com um clique; <b>Consultar</b> na linha atualiza só um.</li><li>A verificação automática roda <b>enquanto o app estiver aberto</b>, numa aba ou instalado. É uma limitação dos navegadores: um site não trabalha com a janela fechada.</li></ul>
+    </div></details>
+
+    <details><summary>4. Alertas</summary><div class="body">
+      <ul><li>Novos processos, intimações, citações e movimentações recentes viram alertas, com ficha do processo (partes, vara, marcos, audiências).</li><li>Publicações antigas que a fonte entrega depois vão para o histórico, sem alerta repetido.</li><li>À direita ficam os <b>autores e réus</b> dos alertas: clique no nome para filtrar. Se o nome já é cliente, o app pergunta se deve vincular (<b>Sim/Não</b>); se não é, oferece <b>Cadastrar cliente</b>.</li></ul>
+    </div></details>
+
+    <details><summary>5. Clientes</summary><div class="body">
+      <ul><li>Cadastro completo de pessoa física ou jurídica, com endereço (preenchido pelo CEP), contatos e redes sociais.</li><li>No cadastro de empresa, o CNPJ preenche os dados públicos automaticamente.</li><li><b>Monitorar</b> o cliente cria a rotina dele: todo processo encontrado é vinculado ao cliente.</li></ul>
+    </div></details>
+
+    <details><summary>6. Relatórios</summary><div class="body">
+      <ul><li>Na tela do monitorado ou em Relatórios, escolha o modelo (sintético, analítico, processual, due diligence, compliance ou investigação) e o formato.</li><li>Cada processo tem um quadro <b>Em resumo</b> para leitura rápida; as tabelas não partem palavras.</li><li>Seu nome, registro (OAB etc.), escritório e logomarca saem na assinatura e no cabeçalho. Configure em Configurações → Meu perfil.</li></ul>
+    </div></details>
+
+    <details><summary>7. Configurações</summary><div class="body">
+      <ul><li><b>Meu perfil:</b> nome, foto, escritório, atividade, registro e logomarca dos relatórios.</li><li><b>Lex AI:</b> escolha o provedor de IA e informe a chave, que fica só neste navegador. Para o Ollama local, libere o acesso do site (instruções na própria tela).</li><li><b>Fontes:</b> estados dos diários oficiais e um servidor SearXNG próprio (opcional).</li><li><b>Segurança:</b> senha de bloqueio opcional.</li><li><b>Backup:</b> exportar e importar todos os dados.</li><li><b>Sistema:</b> monitoramento automático, máscara de CPF/CNPJ, espaço usado e proteção contra limpeza do navegador.</li></ul>
+    </div></details>
+
+    <details><summary>8. Backup e troca de aparelho</summary><div class="body">
+      <ol><li>Em Configurações → Backup, clique em <b>Exportar backup</b>. Um arquivo <b>.json</b> é baixado.</li><li>Guarde o arquivo em local seguro (por exemplo, no Google Drive). Ele contém dados pessoais.</li><li>No outro aparelho, abra o Lex Detetive, vá em Configurações → Backup → <b>Escolher arquivo de backup</b>.</li></ol>
+      <p><b>Importante:</b> se você apagar os dados de navegação do site, os dados do app também são apagados. Faça backups com frequência.</p>
+    </div></details>
+
+    <details><summary>9. Dúvidas frequentes</summary><div class="body">
+      <p><b>Preciso de internet?</b> Para pesquisar e monitorar, sim. O app abre e mostra os dados já salvos mesmo sem internet.</p>
+      <p><b>Quanto custa?</b> Nada. Só a IA na nuvem, se você escolher usar, cobra direto do provedor (alguns têm cota gratuita).</p>
+      <p><b>Por que algumas fontes são “buscas prontas”?</b> Diário Oficial da União, Portal da Transparência, Google, Bing e outros não permitem consulta automática a partir do navegador. O app monta a busca e você abre o resultado oficial com um clique.</p>
+      <p><b>Encontrei um homônimo.</b> Informe o CPF/CNPJ do monitorado: o app confere o documento citado nas publicações e marca os processos com CPF diferente.</p>
+    </div></details>
+  </div>
+</section>
+
+<!-- Privacidade e Sobre -->
+<section id="sobre">
+  <div class="wrap about">
+    <div>
+      <div class="kicker">Privacidade</div>
+      <h2>Seus dados ficam com você</h2>
+      <ul>
+        <li>Tudo é guardado <b>no navegador do seu aparelho</b>; não há servidor da Lex Tecnologias recebendo pesquisas ou cadastros.</li>
+        <li>As consultas vão direto às fontes públicas oficiais.</li>
+        <li>CPF e CNPJ aparecem mascarados por padrão (LGPD), e a auditoria registra as ações.</li>
+        <li>Registre a <b>finalidade</b> de cada monitoramento (base legal da LGPD); ela sai nos relatórios.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="kicker">Sobre</div>
+      <h2>Lex Tecnologias</h2>
+      <p>O Lex Detetive é desenvolvido pela Lex Tecnologias a partir das necessidades da rotina jurídica: acompanhar intimações, conferir homônimos, reunir publicações espalhadas em dezenas de diários e entregar ao cliente um relatório claro.</p>
+      <p>A proposta é simples: <b>ferramenta gratuita, leve e respeitosa com a privacidade</b>, que funciona em qualquer celular ou computador, sem instalação complicada e sem mensalidade.</p>
+      <p class="note">O Lex Detetive reúne informações públicas para apoiar o trabalho profissional. Resultados por nome podem envolver homônimos; confira sempre nos autos e nas fontes oficiais. Não substitui certidões.</p>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="cta-final">
+      <h2>Comece agora</h2>
+      <p>Sem cadastro, sem instalação, sem custo.</p>
+      <a class="use-btn" href="app/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        USE AQUI
+      </a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">© <span id="ano">2026</span> Lex Tecnologias · Lex Detetive · <a href="https://github.com/oliveiracarlosadv/Lex-Detetive">Código no GitHub</a></div>
+</footer>
+<script>document.getElementById('ano').textContent = new Date().getFullYear();</script>
+</body>
+</html>

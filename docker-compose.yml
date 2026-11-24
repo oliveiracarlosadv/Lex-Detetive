@@ -1,0 +1,36 @@
+# Lex Detetive com Docker.
+#   Modo escritório (padrão):  docker compose up -d   → http://localhost:3333
+#   Infra SaaS (preparação):   docker compose --profile saas up -d
+services:
+  lex-detetive:
+    build: .
+    image: lextecnologias/lex-detetive:0.1.0
+    ports: ["3333:3333"]
+    volumes: ["lex-data:/data"]
+    environment:
+      # IA local: Ollama rodando no computador hospedeiro
+      - TZ=America/Sao_Paulo
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    restart: unless-stopped
+
+  # ---- Preparação do modo SaaS multiempresa (ver docs/arquitetura.md) ----
+  postgres:
+    profiles: ["saas"]
+    image: postgres:17-alpine
+    environment: { POSTGRES_DB: lexdetetive, POSTGRES_USER: lex, POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-troque-esta-senha}" }
+    volumes: ["pg-data:/var/lib/postgresql/data"]
+    ports: ["5432:5432"]
+  redis:
+    profiles: ["saas"]
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+  ollama:
+    profiles: ["saas"]
+    image: ollama/ollama:latest
+    volumes: ["ollama:/root/.ollama"]
+    ports: ["11434:11434"]
+
+volumes:
+  lex-data:
+  pg-data:
+  ollama:
