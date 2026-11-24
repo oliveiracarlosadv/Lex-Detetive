@@ -77,6 +77,12 @@ html.app-oculto *, html.app-oculto *::before, html.app-oculto *::after { animati
 @layer base {
   * { border-color: var(--border); }
   html, body { background: var(--background); color: var(--foreground); }
+  /* Tela fixa no aparelho: sem zoom por toque duplo, sem texto ampliado pelo sistema e sem rolagem para os lados. */
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; touch-action: manipulation; overflow-x: hidden; }
+  body { overflow-x: hidden; max-width: 100vw; overscroll-behavior-x: none; }
+  img, svg, video, canvas { max-width: 100%; }
+  /* iPhone amplia a tela ao tocar em campos com letra menor que 16 px: no celular os campos usam 16 px. */
+  @media (max-width: 767px) { input, select, textarea { font-size: 16px !important; } }
   body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
   :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
   ::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); }

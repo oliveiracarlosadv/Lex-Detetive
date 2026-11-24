@@ -48,6 +48,22 @@ function useHiddenClass() {
   }, []);
 }
 
+/** Tela fixa: o Safari do iPhone ignora o bloqueio de zoom da página, então o gesto de pinça é anulado aqui. */
+function useNoZoom() {
+  useEffect(() => {
+    const stop = (e: Event) => e.preventDefault();
+    const pinch = (e: TouchEvent) => { if (e.touches.length > 1) e.preventDefault(); };
+    document.addEventListener('gesturestart', stop, { passive: false } as any);
+    document.addEventListener('gesturechange', stop, { passive: false } as any);
+    document.addEventListener('touchmove', pinch, { passive: false });
+    return () => {
+      document.removeEventListener('gesturestart', stop);
+      document.removeEventListener('gesturechange', stop);
+      document.removeEventListener('touchmove', pinch);
+    };
+  }, []);
+}
+
 /** Liga o monitoramento automático, os resumos do Lex AI e o modo offline (uma vez por aba). */
 function useLocalEngine() {
   useEffect(() => {
@@ -81,6 +97,7 @@ function useLocalEngine() {
 
 export function Providers({ children }: { children: React.ReactNode }) {
   useHiddenClass();
+  useNoZoom();
   useLocalEngine();
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
