@@ -116,6 +116,11 @@ Se outras pessoas usam o aparelho, ligue a **senha de bloqueio** em Configuraç�
 Apagar os dados de navegação do site apaga também os dados do app. Faça backups com frequência.
 </details>
 
+<details><summary><b>7. Atualizações</b></summary>
+
+As atualizações chegam sozinhas: feche e abra o app (ou a aba) com internet. Com o app aberto, aparece o aviso **Nova versão disponível** e o botão **Atualizar agora**. Os dados são mantidos.
+</details>
+
 <p align="center">
   <img src="site/imagens/computador-backup.jpg" width="400" alt="Backup">
   <img src="site/imagens/computador-relatorios.jpg" width="400" alt="Relatórios">

@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { ThemeProvider } from 'next-themes';
-import { Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { Button } from './ui/button';
 import { AuthProvider, useAuth } from '@/lib/auth';
@@ -57,7 +57,24 @@ function useLocalEngine() {
       startMonitoring();
     })();
     if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
-      navigator.serviceWorker.register(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/sw.js`).catch(() => undefined);
+      // Atualizações: ao abrir (ou voltar ao app) procura versão nova; quando ela chega com o app aberto,
+      // avisa e oferece "Atualizar agora". Fechando e abrindo, a versão nova já entra sozinha.
+      const hadController = !!navigator.serviceWorker.controller;
+      let reloading = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!hadController || reloading) return;
+        toast.info('Nova versão do Lex Detetive disponível.', {
+          duration: Infinity,
+          action: { label: 'Atualizar agora', onClick: () => { reloading = true; location.reload(); } },
+        });
+      });
+      navigator.serviceWorker.register(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/sw.js`, { updateViaCache: 'none' })
+        .then((reg) => {
+          const check = () => reg.update().catch(() => undefined);
+          document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+          setInterval(check, 60 * 60 * 1000);
+        })
+        .catch(() => undefined);
     }
   }, []);
 }

@@ -1,6 +1,8 @@
 /* Lex Detetive — modo offline. Guarda as telas do app para abrir sem internet.
    Os dados ficam no banco do navegador (IndexedDB); as consultas às fontes precisam de internet. */
-const CACHE = 'lex-detetive-v1';
+// A versão é trocada a cada publicação (scripts/build-pages.sh): o navegador percebe a mudança e atualiza.
+const VERSION = 'dev';
+const CACHE = `lex-detetive-${VERSION}`;
 const BASE = new URL('./', self.location).pathname;
 
 self.addEventListener('install', (e) => {
