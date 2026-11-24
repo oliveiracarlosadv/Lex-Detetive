@@ -12,7 +12,7 @@ DEST="${LEX_DRIVE_DIR:-$DEFAULT_DEST}"
 echo "==> Código-fonte → $DEST/codigo-fonte"
 rsync -a --delete \
   --exclude '.git/' --exclude 'node_modules/' --exclude 'dist/' --exclude '.next/' --exclude 'out/' \
-  --exclude 'apps/api/public/' --exclude 'apps/desktop/staging/' --exclude 'installers/' \
+  --exclude 'apps/api/public/' --exclude 'apps/desktop/staging/' --exclude 'installers/' --exclude 'dist-pages/' --exclude 'apps/web/out/' \
   --exclude 'apps/desktop/build/mac/*.app/' --exclude '*.db' --exclude '*.db-*' --exclude '.env' \
   --exclude '*.tsbuildinfo' --exclude 'next-env.d.ts' --exclude '.DS_Store' \
   ./ "$DEST/codigo-fonte/"
