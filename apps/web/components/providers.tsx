@@ -103,7 +103,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
       <AuthProvider>
         <Gate>{children}</Gate>
-        <Toaster richColors position="top-right" closeButton />
+        <Toaster richColors position="bottom-right" closeButton offset={{ bottom: "calc(24px + env(safe-area-inset-bottom))" }} mobileOffset={{ bottom: "calc(16px + env(safe-area-inset-bottom))" }} />
       </AuthProvider>
     </ThemeProvider>
   );

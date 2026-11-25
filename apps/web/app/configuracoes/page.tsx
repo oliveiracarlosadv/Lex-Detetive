@@ -74,7 +74,7 @@ function ProfileTab() {
   };
   const registry = f.registryType && f.registryNumber ? `${f.registryType}${f.registryUf ? `/${f.registryUf}` : ''} ${f.registryNumber}` : '';
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
+    <div className="grid gap-4 lg:grid-cols-[1fr_360px] [&>*]:min-w-0">
       <Card><CardHeader><div><CardTitle>Meu perfil</CardTitle><CardDescription>Estes dados aparecem na assinatura e no cabeçalho dos relatórios.</CardDescription></div></CardHeader>
         <CardContent>
           <div className="mb-4 flex items-center gap-4">
@@ -156,7 +156,7 @@ function AiTab() {
   };
   const test = async () => { setTesting(true); const r = await api('/ai/test', { method: 'POST', body: { provider: sel } }); setTesting(false); r.ok ? toast.success(`${r.provider} respondeu em ${r.ms} ms: "${r.reply}"`) : toast.error(r.error); };
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
+    <div className="grid gap-4 lg:grid-cols-[1fr_360px] [&>*]:min-w-0">
       <Card><CardHeader><div><CardTitle>Provedor de IA</CardTitle><CardDescription>Local (sem internet, dados não saem do computador) ou nuvem (com chave de API)</CardDescription></div></CardHeader>
         <CardContent className="grid gap-2 sm:grid-cols-2">
           {providers.map((x) => (
@@ -212,7 +212,7 @@ function SourcesTab() {
   const [sx, setSx] = useState<string | null>(null); const [ufs, setUfs] = useState<string | null>(null);
   if (!s) return <Skeleton className="h-40" />;
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="grid gap-4 lg:grid-cols-2 [&>*]:min-w-0">
       <Card className="lg:col-span-2"><CardHeader><div><CardTitle>Como as fontes funcionam no navegador</CardTitle><CardDescription>As consultas saem direto deste aparelho para as fontes oficiais.</CardDescription></div></CardHeader>
         <CardContent className="grid gap-3 text-sm sm:grid-cols-2">
           <div><div className="mb-1 font-medium">Automáticas</div><p className="text-muted-foreground">DJEN (intimações e publicações dos tribunais), Querido Diário (diários municipais), BrasilAPI e CNPJá (CNPJ), GitHub, Bluesky, Mastodon e GitLab.</p></div>
@@ -242,7 +242,7 @@ function SecurityTab() {
     } catch (e: any) { toast.error(e.message); } finally { setBusy(false); }
   };
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="grid gap-4 lg:grid-cols-2 [&>*]:min-w-0">
       <Card><CardHeader><div><CardTitle>Senha de bloqueio</CardTitle><CardDescription>Opcional. Quando ligada, o app pede a senha ao ser aberto neste navegador. Útil se outras pessoas usam o mesmo aparelho.</CardDescription></div><Badge tone={hasPassword ? 'green' : 'neutral'}>{hasPassword ? 'ligada' : 'desligada'}</Badge></CardHeader>
         <CardContent>
           <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="space-y-3">
@@ -279,7 +279,7 @@ function BackupTab() {
     } catch (e: any) { toast.error(e.message); } finally { setBusy(''); }
   };
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="grid gap-4 lg:grid-cols-2 [&>*]:min-w-0">
       <Card><CardHeader><div><CardTitle>Exportar backup</CardTitle><CardDescription>Baixa um arquivo com todos os dados deste navegador: monitorados, processos, alertas, clientes, relatórios e configurações.</CardDescription></div></CardHeader>
         <CardContent className="space-y-3">
           <Button onClick={doExport} loading={busy === 'export'}><Download />Exportar backup</Button>
@@ -313,7 +313,7 @@ function SystemTab() {
     await api('/data/erase', { method: 'POST' }); toast.success('Dados apagados.'); setTimeout(() => location.reload(), 800);
   };
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="grid gap-4 lg:grid-cols-2 [&>*]:min-w-0">
       <Card><CardHeader><CardTitle>Preferências</CardTitle></CardHeader><CardContent className="divide-y divide-border">
         {row('Monitoramento automático', 'Verifica os monitorados no intervalo escolhido enquanto o app estiver aberto.', 'monitor.enabled')}
         {row('Mascarar CPF/CNPJ', 'Exibe documentos parcialmente ocultos (LGPD). Visualizar completo fica registrado na auditoria.', 'privacy.maskDocuments')}
@@ -331,7 +331,7 @@ function SystemTab() {
           <span>{st?.persisted ? 'Dados protegidos contra limpeza automática do navegador.' : 'O navegador pode apagar os dados se faltar espaço.'}</span>
           {!st?.persisted && <Button size="sm" variant="outline" onClick={persist}>Proteger</Button>}
         </div>
-        <Button variant="ghost" className="text-danger" onClick={erase}><Trash2 />Apagar todos os dados deste navegador</Button>
+        <Button variant="ghost" className="h-auto whitespace-normal py-2 text-left text-danger" onClick={erase}><Trash2 className="shrink-0" />Apagar todos os dados deste navegador</Button>
       </CardContent></Card>
     </div>
   );
