@@ -154,6 +154,6 @@ cd apps/web && npm install && npx next dev
 
 ## Licença
 
-Código licenciado sob a [Licença MIT](LICENSE) — © 2026 Carlos Alexandre Albuquerque Oliveira. Você pode usar, copiar, modificar e distribuir, inclusive para fins comerciais, desde que mantenha o aviso de direitos autorais e a licença.
+Código licenciado sob a [GNU General Public License v3.0](LICENSE) — © 2026 Carlos Alexandre Albuquerque Oliveira. Você pode usar, estudar, modificar e distribuir; versões modificadas que forem distribuídas devem permanecer sob a GPL-3.0, com o código-fonte disponível.
 
-O nome, a marca e o logotipo do projeto **não** estão incluídos na licença e não podem ser usados para sugerir endosso ou vínculo sem autorização.
+O nome, a marca e o logotipo do projeto **não** estão incluídos na licença.
